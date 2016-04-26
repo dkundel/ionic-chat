@@ -23,7 +23,7 @@ angular.module('starter', ['ionic'])
   });
 });
 
-function IonicChatController() {
+function IonicChatController($ionicPopup) {
   var vm = this;
   
   vm.author = 'Cyborg';
@@ -37,5 +37,16 @@ function IonicChatController() {
     };
     vm.messages.push(message);
     vm.currentMessage = '';
+  }
+  
+  vm.showPopup = function () {
+    $ionicPopup.prompt({
+      title: 'Welcome!',
+      template: 'What is your username?',
+      inputType: 'text',
+      inputPlaceholder: 'Your username...'
+    }).then(function(res) {
+      vm.author = res;
+    });
   }
 }
