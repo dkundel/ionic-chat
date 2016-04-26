@@ -25,3 +25,7 @@
 .chatbubble-body {
   
 }
+
+.platform-android .bar-header {
+  text-transform: uppercase;  
+}

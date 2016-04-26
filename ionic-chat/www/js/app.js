@@ -23,8 +23,10 @@ angular.module('starter', ['ionic'])
   });
 });
 
-function IonicChatController($ionicPopup, $http, $scope) {
+function IonicChatController($ionicPopup, $http, $scope, $ionicActionSheet) {
   var vm = this;
+  
+  var loggedIn = false;
   
   vm.author = 'Cyborg';
   vm.currentMessage = '';
@@ -44,14 +46,38 @@ function IonicChatController($ionicPopup, $http, $scope) {
       defaultValue: vm.author
     }).then(function(res) {
       vm.author = res;
+      localStorage.setItem('username', res);
       logIn(res);
     });
+  }
+  
+  
+  vm.showAction = function() {
+    var hide = $ionicActionSheet.show({
+      destructiveText: 'Delete Conversation',
+      titleText: 'Chat Actions',
+      cancelText: 'Cancel',
+      cancel: function() {
+            // add cancel code..
+          },
+      destructiveButtonClicked: function () {
+        vm.messages = [];
+        hide();
+      },
+      buttonClicked: function(index) {
+        console.log('Button chosen: index');
+        return true;
+      }
+    })
   }
   
   var messagingClient;
   var generalChannel;
   
   function logIn(author) {
+    if (loggedIn) {
+      return;
+    }
     console.log('Get token!');
     $http.get('http://localhost:3000/token?device=chat&identity='+author).then(function (res) {
       var accessManager = new Twilio.AccessManager(res.data.token);
@@ -90,6 +116,7 @@ function IonicChatController($ionicPopup, $http, $scope) {
       })
       
     });
+    loggedIn = true;
     
     generalChannel.on('messageAdded', function (message) {
       $scope.$apply(function () {
@@ -98,8 +125,12 @@ function IonicChatController($ionicPopup, $http, $scope) {
     });
   }
   
-  
-  
-  
+  var user = localStorage.getItem('username');
+  if (user && user.length !== 0) {
+    vm.author = user;
+    logIn(user);
+  } else {
+    vm.showPopup();
+  }
   
 }
