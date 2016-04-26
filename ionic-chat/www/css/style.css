@@ -29,3 +29,9 @@
 .platform-android .bar-header {
   text-transform: uppercase;  
 }
+
+h1 small {
+  font-size: 10px;
+  text-transform: initial;
+  
+}

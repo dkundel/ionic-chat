@@ -106,6 +106,11 @@ function IonicChatController($ionicPopup, $http, $scope, $ionicActionSheet) {
     })
   }
   
+  vm.startsTyping = function() {
+    console.log('keydown');
+    generalChannel.typing();
+  }
+  
   function setupChannel() {
     generalChannel.join().then(function (channel) {
       $scope.$apply(function () {
@@ -115,14 +120,41 @@ function IonicChatController($ionicPopup, $http, $scope, $ionicActionSheet) {
         });
       })
       
+      grabMessages();
+      
     });
     loggedIn = true;
+    
+    generalChannel.on('typingStarted', function(member) {
+      console.log('typing!'+member.identity);
+      
+      $scope.$apply(function () {
+        vm.isTyping = member.identity;
+      });
+    });
+
+    generalChannel.on('typingEnded', function(member) {
+      $scope.$apply(function () {
+  vm.isTyping = undefined;
+      });
+    });
     
     generalChannel.on('messageAdded', function (message) {
       $scope.$apply(function () {
         vm.messages.push(message);
       })
     });
+  }
+  
+  function grabMessages() {
+    generalChannel.getMessages(50).then(function (messages) {
+      $scope.$apply(function () {
+        messages.forEach(function (message){
+          vm.messages.push(message);
+        })
+      })
+      
+    })
   }
   
   var user = localStorage.getItem('username');

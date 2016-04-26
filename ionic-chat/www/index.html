@@ -31,7 +31,7 @@
       <ion-header-bar class="bar-stable">
         <button class="button button-clear button-positive ion-ios-settings-strong" ng-click="vm.showPopup()">
         </button>
-        <h1 class="title">IonicChat</h1>
+        <h1 class="title">IonicChat  <small>{{vm.isTyping ? vm.isTyping + ' is typing...' : ''}}</small></h1>
         <button class="button button-clear button-positive ion-ios-pint" ng-click="vm.showAction()">
         </button>
       </ion-header-bar>
@@ -47,7 +47,7 @@
       </ion-content>
       <ion-footer-bar class="bar-stable item-input-inset">
         <label class="item-input-wrapper">
-          <input type="text" ng-model="vm.currentMessage" placeholder="Write your message...">
+          <input type="text" ng-model="vm.currentMessage" placeholder="Write your message..." ng-keydown="vm.startsTyping()">
         </label>
         <button class="button button-clear button-positive" ng-click="vm.sendMessage()">
           Send
