@@ -1,0 +1,27 @@
+/* Empty. Add your own CSS if you like */
+
+#chat {
+  display: flex;
+  flex-direction: column;
+}
+
+.chatbubble {
+  background: #ededed;
+  width: 70%;
+  padding: 10px;
+  margin: 5px 10px;
+  border-radius: 10px;
+}
+
+.chatbubble.my {
+  background: lightgreen;
+  align-self: flex-end;
+}
+
+.chatbubble-name {
+  
+}
+
+.chatbubble-body {
+  
+}
