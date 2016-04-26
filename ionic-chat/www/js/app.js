@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
-
+.controller('IonicChatController', IonicChatController)
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -21,4 +21,21 @@ angular.module('starter', ['ionic'])
       StatusBar.styleDefault();
     }
   });
-})
+});
+
+function IonicChatController() {
+  var vm = this;
+  
+  vm.author = 'Cyborg';
+  vm.currentMessage = '';
+  vm.messages = [];
+  
+  vm.sendMessage = function () {
+    var message = {
+      body: vm.currentMessage,
+      author: vm.author
+    };
+    vm.messages.push(message);
+    vm.currentMessage = '';
+  }
+}
