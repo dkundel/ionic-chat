@@ -23,7 +23,7 @@ angular.module('starter', ['ionic'])
   });
 });
 
-function IonicChatController($ionicPopup) {
+function IonicChatController($ionicPopup, $http, $scope) {
   var vm = this;
   
   vm.author = 'Cyborg';
@@ -31,11 +31,7 @@ function IonicChatController($ionicPopup) {
   vm.messages = [];
   
   vm.sendMessage = function () {
-    var message = {
-      body: vm.currentMessage,
-      author: vm.author
-    };
-    vm.messages.push(message);
+    generalChannel.sendMessage(vm.currentMessage);
     vm.currentMessage = '';
   }
   
@@ -44,9 +40,66 @@ function IonicChatController($ionicPopup) {
       title: 'Welcome!',
       template: 'What is your username?',
       inputType: 'text',
-      inputPlaceholder: 'Your username...'
+      inputPlaceholder: 'Your username...',
+      defaultValue: vm.author
     }).then(function(res) {
       vm.author = res;
+      logIn(res);
     });
   }
+  
+  var messagingClient;
+  var generalChannel;
+  
+  function logIn(author) {
+    console.log('Get token!');
+    $http.get('http://localhost:3000/token?device=chat&identity='+author).then(function (res) {
+      var accessManager = new Twilio.AccessManager(res.data.token);
+      messagingClient = new Twilio.IPMessaging.Client(accessManager);
+      
+      var promise = messagingClient.getChannelByUniqueName('general');
+      promise.then(function(channel) {
+          generalChannel = channel;
+          if (!generalChannel) {
+              // If it doesn't exist, let's create it
+              messagingClient.createChannel({
+                  uniqueName: 'general',
+                  friendlyName: 'General Chat Channel'
+              }).then(function(channel) {
+                  console.log('Created general channel:');
+                  console.log(channel);
+                  generalChannel = channel;
+                  setupChannel();
+              });
+          } else {
+              console.log('Found channel:');
+              console.log(generalChannel);
+              setupChannel();
+          }
+      });
+    })
+  }
+  
+  function setupChannel() {
+    generalChannel.join().then(function (channel) {
+      $scope.$apply(function () {
+        vm.messages.push({
+          author: 'Chatbot',
+          body: 'Joined!'
+        });
+      })
+      
+    });
+    
+    generalChannel.on('messageAdded', function (message) {
+      $scope.$apply(function () {
+        vm.messages.push(message);
+      })
+    });
+  }
+  
+  
+  
+  
+  
 }

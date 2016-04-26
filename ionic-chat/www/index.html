@@ -15,6 +15,10 @@
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
+    <script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+    <script src="//media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.9/twilio-ip-messaging.min.js"></script>
+  
+
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
@@ -32,7 +36,7 @@
       </ion-header-bar>
       <ion-content>
         <div id="chat">
-          <div class="chatbubble" ng-repeat="message in vm.messages">
+          <div class="chatbubble" ng-repeat="message in vm.messages" ng-class="{'my': vm.author === message.author}">
             <span class="chatbubble-name">{{message.author}}</span>
             <p class="chatbubble-body">
               {{message.body}}
